@@ -118,17 +118,4 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            emailext(
-                attachLog: true,
-                subject: "Build Result: '${currentBuild.result}'",
-                body: """<b>Project:</b> ${env.JOB_NAME}<br/>
-                         <b>Build Number:</b> ${env.BUILD_NUMBER}<br/>
-                         <b>URL:</b> ${env.BUILD_URL}<br/>""",
-                to: 'saundarya143@gmail.com',
-                attachmentsPattern: 'trivyfs.txt'
-            )
-        }
-    }
-}
+    
