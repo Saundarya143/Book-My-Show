@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+        stage('Checkout Code') {
+            steps {
+                git url: 'https://github.com/Saundarya143/Book-My-Show.git', branch: 'main'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Docker Build & Push') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'saundarya143', passwordVariable: 'docker-key')]) {
+                        sh 'echo $docker-key | docker login -u $saundarya143 --password-stdin'
+                        sh 'docker build -t $saundarya143/bookmyshow:latest .'
+                        sh 'docker push $saundarya143/bookmyshow:latest'
+                    }
+                }
+            }
+        }
+        stage('Deploy to Docker') {
+            steps {
+                sh 'docker run -d -p 3000:3000 $saundarya143/bookmyshow:latest'
+            }
+        }
+    }
+}
